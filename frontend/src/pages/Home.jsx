@@ -22,7 +22,7 @@ export default function Home({ currentUser }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 border border-[#40012b] rounded-xl bg-[#f0c8c8]/60 flex flex-col justify-between">
             <div>
-              <h3 className="font-bold text-slate-800 text-base">பாயான் அட்டவணை பார்க்க</h3>
+              <h3 className="font-bold text-slate-800 text-base">பயான் அட்டவணை பார்க்க</h3>
               <p className="text-xs text-slate-500 mt-1">View your assigned weekly speech schedules and interactive report flyer layouts.</p>
             </div>
             <button 
@@ -36,7 +36,7 @@ export default function Home({ currentUser }) {
           {isAdmin ? (
             <div className="p-5 border border-emerald-100 rounded-xl bg-emerald-50/30 flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-emerald-900 text-base">பாயான் அட்டவணை தயாரிக்க</h3>
+                <h3 className="font-bold text-emerald-900 text-base">பயான் அட்டவணை தயாரிக்க</h3>
                 <p className="text-xs text-emerald-600 mt-1">Admin Panel: Allocate new speech slots, pick locations, and assign speakers.</p>
               </div>
               <button 

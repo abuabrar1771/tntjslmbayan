@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"; // 👈 Integrated React Router Navigation
 
 const AuthPage = ({ onLoginSuccess }) => {
+  const navigate = useNavigate(); // 👈 Initialized navigation hook
   const [authMode, setAuthMode] = useState("LOGIN"); // 'LOGIN' or 'SIGNUP'
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +64,7 @@ const AuthPage = ({ onLoginSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Integrity pass checking for configuration passwords
+    // Integrity check for confirmation password on signup
     if (
       authMode === "SIGNUP" &&
       formData.password !== formData.confirmPassword
@@ -73,12 +75,12 @@ const AuthPage = ({ onLoginSuccess }) => {
 
     setLoading(true);
 
-    // 📱 Normalizing Phone Numbers: Automatically prepend +91 if missing
-    let cleanPhone = formData.phoneNumber.trim().replace(/\s+/g, "");
-    if (!cleanPhone.startsWith("+")) {
-      cleanPhone = `+91${cleanPhone}`;
-    }
+    // 📱 Normalizing Phone Numbers: Extracts digits and prepends +91 cleanly
+    const rawDigits = formData.phoneNumber.replace(/\D/g, "");
+    const tenDigitBase = rawDigits.slice(-10);
+    const cleanPhone = `+91${tenDigitBase}`;
 
+    // 1. Dynamic Endpoint Selection
     const endpoint =
       authMode === "LOGIN" ? "/api/speakers/login" : "/api/speakers/signup";
 
@@ -87,7 +89,7 @@ const AuthPage = ({ onLoginSuccess }) => {
         ? { phoneNumber: cleanPhone, password: formData.password }
         : {
             nameEng: formData.nameEng,
-            nameTa: formData.nameTa, 
+            nameTa: formData.nameTa,
             phoneNumber: cleanPhone,
             password: formData.password,
             address: formData.address,
@@ -95,35 +97,37 @@ const AuthPage = ({ onLoginSuccess }) => {
           };
 
     try {
-      // Direct connection utilizing your backend structural architecture port 5000
+      // 2. Dynamic Axios execution mapping login vs signup
       const response = await axios.post(
         `http://localhost:5000${endpoint}`,
         payload,
+        { withCredentials: true },
       );
 
       if (response.data.success) {
         toast.success(`🎉 ${response.data.message}`);
 
         if (response.data.token) {
-          // ⚡ ⭐ CHANGED: Saving parameters directly into temporary sessionStorage 
+          // Store raw JWT bearer token
           sessionStorage.setItem("speakerToken", response.data.token);
 
-          // Construct speaker tracking information schema objects safely
+          // Construct normalized user payload with strict role assignment
           const userPayload = {
             id: response.data.speaker.id,
             nameEng: response.data.speaker.nameEng,
-            nameTa: response.data.speaker.nameTa || formData.nameTa, // Cache Tamil text string fallback
+            nameTa: response.data.speaker.nameTa || formData.nameTa,
             phoneNumber: response.data.speaker.phoneNumber,
+            role: response.data.speaker.role || "Speaker", // 👈 Captured role ('Admin' or 'Speaker')
           };
 
-          // ⚡ ⭐ CHANGED: Saving user profile dataset into temporary sessionStorage
+          // Cache user profile dataset in sessionStorage
           sessionStorage.setItem("speakerInfo", JSON.stringify(userPayload));
 
-          setTimeout(() => {
-            // 🎯 Lifiting state context cleanly. 
-            // Since your Route path="/" renders <Home/> inside App.jsx, this instantly reveals the Home view page!
-            onLoginSuccess(userPayload);
-          }, 1000);
+          // Lift state up to parent App
+          onLoginSuccess(userPayload);
+
+          // 3. 🏠 REDIRECT TO HOME PAGE FOR ALL LOGGED IN USERS
+          navigate("/", { replace: true });
         }
       }
     } catch (error) {
@@ -179,7 +183,7 @@ const AuthPage = ({ onLoginSuccess }) => {
                   required
                   className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none transition-all font-mono text-sm font-bold bg-slate-50 cursor-pointer"
                 >
-                  <option value="Speaker">SPEAKER </option>
+                  <option value="Speaker">SPEAKER</option>
                   <option value="User">STANDARD USER</option>
                 </select>
               </div>
@@ -227,7 +231,7 @@ const AuthPage = ({ onLoginSuccess }) => {
             </>
           )}
 
-          {/* Core Login/Identity Column Target Matrix: Phone Number */}
+          {/* Mobile Number Input Field */}
           <div>
             <label className="block text-xs font-black uppercase text-slate-600 mb-2 tracking-wide">
               Mobile Number
@@ -242,7 +246,7 @@ const AuthPage = ({ onLoginSuccess }) => {
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 required
-                placeholder="e.g. 9876543210"
+                placeholder="e.g. 8344331824"
                 className="w-full p-3 pl-10 border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none font-mono font-bold text-slate-700 bg-slate-50/10"
               />
             </div>

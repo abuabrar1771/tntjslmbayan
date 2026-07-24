@@ -14,7 +14,12 @@ export default function BayanSchedule({ currentUser }) {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const isAdmin = currentUser && currentUser.phoneNumber === '+919087795074';
+  // 👑 Check role directly from backend payload, with phone number fallback
+const isAdmin = currentUser && (
+  currentUser.role === 'Admin' || 
+  currentUser.phoneNumber === '+918344331824' || 
+  currentUser.phoneNumber === '+919087795074'
+);
 
   const calculateWeeklyRange = (inputDate) => {
     const dateObj = new Date(inputDate.replace(/-/g, '\/'));

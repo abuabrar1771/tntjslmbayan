@@ -1,24 +1,28 @@
+import 'dotenv/config';
 import pg from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const { Pool } = pg;
 
 const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_DATABASE,
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+  database: process.env.DB_NAME || process.env.DB_DATABASE, // Handles both key variants!
+});
+
+// Attach a global error listener to prevent the Node process from exiting silently
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle PostgreSQL client:', err);
 });
 
 pool.connect((err, client, release) => {
   if (err) {
-    return console.error('Error acquiring client', err.stack);
+    console.error('❌ Database connection error:', err.stack);
+    return;
   }
   console.log('Successfully connected to PostgreSQL Database! 🎉');
   release();
 });
 
-export default pool; 
+export default pool;

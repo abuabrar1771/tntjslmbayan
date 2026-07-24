@@ -9,8 +9,8 @@ const TopBanner = ({ onLogout, currentUser }) => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  // 🛡️ Admin Verification Check Parameter
-  const isAdmin = currentUser && currentUser.phoneNumber === '+919087795074';
+ // 🛡️ Admin Verification Check Parameter (Checks the role sent by the backend)
+const isAdmin = currentUser && (currentUser.role === 'Admin' || currentUser.phoneNumber === '+918344331824');
 
   const handleLogoutClick = () => {
     if (window.confirm("⚠️ வெளியேற வேண்டுமா? Are you sure you want to log out?")) {
@@ -68,7 +68,7 @@ const TopBanner = ({ onLogout, currentUser }) => {
                   to="/speaches" 
                   className={`transition ${currentPath === "/speaches" ? "text-emerald-600 underline underline-offset-4" : "hover:text-emerald-600"}`}
                 >
-                  பாயான் அட்டவணை தயாரிக்க
+                  பயான் அட்டவணை தயாரிக்க
                 </Link>
               </li>
             )}
@@ -79,7 +79,7 @@ const TopBanner = ({ onLogout, currentUser }) => {
                 to="/bayan-schedule" 
                 className={`transition ${currentPath === "/bayan-schedule" ? "text-emerald-600 underline underline-offset-4" : "hover:text-emerald-600"}`}
               >
-                பாயான் அட்டவணை பார்க்க
+                பயான் அட்டவணை பார்க்க
               </Link>
             </li>
 
@@ -146,7 +146,7 @@ const TopBanner = ({ onLogout, currentUser }) => {
                     to="/speaches" 
                     className={`block py-1.5 border-b border-slate-50 ${currentPath === "/speaches" ? "text-emerald-600 pl-1" : ""}`}
                   >
-                    பாயான் அட்டவணை தயாரிக்க
+                    பயான் அட்டவணை தயாரிக்க
                   </Link>
                 </li>
               )}
@@ -157,7 +157,7 @@ const TopBanner = ({ onLogout, currentUser }) => {
                   to="/bayan-schedule" 
                   className={`block py-1.5 border-b border-slate-50 ${currentPath === "/bayan-schedule" ? "text-emerald-600 pl-1" : ""}`}
                 >
-                  பாயான் அட்டவணை பார்க்க
+                  பயான் அட்டவணை பார்க்க
                 </Link>
               </li>
 
