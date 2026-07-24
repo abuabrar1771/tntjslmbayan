@@ -48,12 +48,6 @@ router.post('/login', async (req, res) => {
     const envAdminPhone = process.env.ADMIN_MOBILENUM ? process.env.ADMIN_MOBILENUM.trim() : '';
     const envAdminPass = process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD.trim() : '';
 
-    console.log("-----------------------------------------");
-    console.log("👉 FRONTEND PHONE RECEIVED:", phoneNumber);
-    console.log("👉 NORMALIZED PHONE:       ", normalizedPhone);
-    console.log("👉 ENV ADMIN PHONE:        ", envAdminPhone);
-    console.log("-----------------------------------------");
-
     // 👑 A. Admin Verification Check
     if (normalizedPhone === envAdminPhone && cleanPassword === envAdminPass) {
       console.log("🟢 ADMIN LOGIN SUCCESSFUL");
